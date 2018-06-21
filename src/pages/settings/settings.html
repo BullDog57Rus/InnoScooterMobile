@@ -7,12 +7,22 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>settings</ion-title>
+    <ion-title align="center">Settings</ion-title>
+    <ion-buttons end>
+      <button ion-button (click)="scan()">
+        Scan
+      </button>
+    </ion-buttons>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
-
+  <ion-list>
+    <button ion-item *ngFor="let device of devices">
+      <h2>{{ device.name || 'Innamed' }}</h2>
+      <p>{{ device.id }}</p>
+    </button>
+  </ion-list>
 </ion-content>

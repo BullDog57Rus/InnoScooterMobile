@@ -1,6 +1,13 @@
-import { Component, NgZone } from '@angular/core';
-import { NavController, IonicPage, NavParams } from 'ionic-angular';
-import { BLE } from '@ionic-native/ble';
+import {Component, NgZone} from '@angular/core';
+import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { BLE } from "@ionic-native/ble";
+
+/**
+ * Generated class for the SettingsPage page.
+ *
+ * See https://ionicframework.com/docs/components/#navigation for more info on
+ * Ionic pages and navigation.
+ */
 
 @IonicPage()
 @Component({
@@ -14,8 +21,8 @@ export class SettingsPage {
 
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
-              private ble: BLE,
-              private ngZone: NgZone) {
+              public ngZone: NgZone,
+              public ble: BLE) {
   }
 
   ionViewDidEnter() {

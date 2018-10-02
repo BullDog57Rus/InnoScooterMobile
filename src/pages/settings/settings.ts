@@ -1,6 +1,7 @@
 import {Component, NgZone} from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { BLE } from "@ionic-native/ble";
+import {IonicPage, NavController, NavParams} from 'ionic-angular';
+import {BLE} from "@ionic-native/ble";
+import {QRScanner, QRScannerStatus} from '@ionic-native/qr-scanner';
 
 /**
  * Generated class for the SettingsPage page.
@@ -22,7 +23,8 @@ export class SettingsPage {
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
               public ngZone: NgZone,
-              public ble: BLE) {
+              public ble: BLE,
+              public qrScanner: QRScanner) {
   }
 
   ionViewDidEnter() {
@@ -41,6 +43,24 @@ export class SettingsPage {
     setTimeout(this.setStatus.bind(this), 5000, 'Scan complete');
   }
 
+  scanQrCode() {
+    this.qrScanner.prepare().then((status: QRScannerStatus) => {
+      if (status.authorized) {
+        let scanSub = this.qrScanner.scan().subscribe((text: string) => {
+          console.log("Scanned QR", text);
+
+          this.qrScanner.hide();
+          scanSub.unsubscribe();
+        });
+      } else if (status.denied) {
+        this.setStatus("Camera permission was permanently denied");
+        this.qrScanner.openSettings();
+      } else {
+        this.setStatus("Something went wrong, please, try again later");
+      }
+    }).catch((e: any) => console.log('Error is', e));
+  }
+
   onDeviceDiscovered(device) {
     console.log('Discovered ' + JSON.stringify(device, null, 2));
     this.ngZone.run(() => {
@@ -50,7 +70,7 @@ export class SettingsPage {
 
   // If location permission is denied, you'll end up here
   scanError(error) {
-    this.setStatus('Error ' + error);
+    this.setStatus('Error: ' + error);
   }
 
   setStatus(message) {

@@ -8,7 +8,12 @@
 
   <ion-navbar>
     <ion-title align="center">Settings</ion-title>
-    <ion-buttons end>
+    <ion-buttons left>
+      <button ion-button (click)="scanQrCode()">
+        Scan
+      </button>
+    </ion-buttons>
+    <ion-buttons right>
       <button ion-button (click)="scan()">
         Scan
       </button>

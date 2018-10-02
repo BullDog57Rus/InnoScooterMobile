@@ -1,13 +1,6 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { BLE } from "@ionic-native/ble";
-
-/**
- * Generated class for the SettingsPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
+import { Component, NgZone } from '@angular/core';
+import { NavController, IonicPage, NavParams } from 'ionic-angular';
+import { BLE } from '@ionic-native/ble';
 
 @IonicPage()
 @Component({
@@ -17,22 +10,22 @@ import { BLE } from "@ionic-native/ble";
 export class SettingsPage {
 
   devices: any[] = [];
-  status: string;
-  error: string;
+  statusMessage: string;
 
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
-              public ble: BLE) {
+              private ble: BLE,
+              private ngZone: NgZone) {
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad SettingsPage');
+  ionViewDidEnter() {
+    console.log('ionViewDidEnter');
+    this.scan();
   }
 
   scan() {
-    this.setStatus('Scanning for BLE devices');
-    this.devices = [];
-
+    this.setStatus('Scanning for Bluetooth LE Devices');
+    this.devices = [];  // clear list
     this.ble.scan([], 5).subscribe(
       device => this.onDeviceDiscovered(device),
       error => this.scanError(error)
@@ -43,15 +36,21 @@ export class SettingsPage {
 
   onDeviceDiscovered(device) {
     console.log('Discovered ' + JSON.stringify(device, null, 2));
-    this.devices.push(device);
+    this.ngZone.run(() => {
+      this.devices.push(device);
+    });
   }
 
-  setStatus(status) {
-    this.status = status;
-  }
-
+  // If location permission is denied, you'll end up here
   scanError(error) {
-    this.error = error;
+    this.setStatus('Error ' + error);
+  }
+
+  setStatus(message) {
+    console.log(message);
+    this.ngZone.run(() => {
+      this.statusMessage = message;
+    });
   }
 
 }
